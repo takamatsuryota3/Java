@@ -1,32 +1,92 @@
+// =====自販機プログラム=====
+// コマンドライン引数で、投入する硬貨、購入する商品の価格を指定する
+// 購入する商品の価格は、コマンドライン引数の最後とする
+// コマンドライン引数以外を、投入する硬貨とする
 // 投入出来る硬貨は、10円玉、50円玉、100円玉、500円玉とする
+// 硬貨ではない金額（ex.777）を指定した場合は、投入金額にカウントしない
+// 半角英字、全角文字を指定した場合は、投入金額にカウントしない
+// ==========
+// 以下のように動作する
+// -コマンドライン引数で、半角英字や全角文字を指定した場合は、
+//  「使用出来ない硬貨が投入されました。」と表示する
+// -コマンドライン引数が１つの場合や、コマンドライン引数が２つ以上の最後の引数が、半角英字や全角文字を指定した場合は、
+//  「自動販売機が壊れています、大変申し訳ございません。自動販売機の管理者に問い合わせしてください。」と表示する
+// -コマンドライン引数なしで実行した場合は、「お気に召す商品がなかったのですね。次回までに準備しておきます。申し訳ございません。」と表示する
+// -投入する硬貨については、「XXX円玉が投入されました。」と表示する
+// -購入する商品価格については、「購入しようとしている商品価格はXXX円です。」と表示する
+// -投入合計金額については、「投入金額はXXX円です。」と表示する
+// -おつりについては以下のように動作する
+//      -おつりがある場合は、
+//      「おつりはXXX円です。ありがとうございました。」と表示する
+//      -ちょうどの場合は、
+//      「ちょうどお預かりします。ありがとうございました。」と表示する
+//      -投入金額が不足している場合は、
+//      「あとXXX円足りません。ご準備お願いいたします。」と表示する
+// -コマンドライン引数１つで実行した場合は、
+//  「購入しようとしている商品価格はXXX円です。投入金額は0円です。
+//   あとXXX円足りません。ご準備お願いいたします。」と表示する
+// -コマンドライン引数２つ以上で実行した場合は、以下のように動作する
+//      -購入する商品の価格、投入した硬貨の合計金額（投入金額）、おつりを表示する
+// ========================
 
 public class Jihan {
+    public static final String LINE_SEPARATOR = System.getProperty("line.separator");   // 改行コード
     public static void main(String[] args) {
-        int coinNum = args.length; // 投入された硬貨の枚数
-        int coinChk = 0;    // 確認する硬貨
-        int coinSum = 0;    //投入された硬貨の合計
+        int coinNum = args.length;  // 投入された硬貨の枚数
+        int coinChk = 0;            // 確認する硬貨
+        int coinSum = 0;            // 投入された硬貨の合計
+        int price = 0;              // 購入する商品の価格
+        int change = 0;             // おつり
 
-        for (int i = 0; i < coinNum; i++){
-            // 使用可能な硬貨か確認する
+        // コマンドライン引数の数で処理を分岐
+        if (coinNum != 0){
+            // 購入する商品の価格を確認
             try {
-                coinChk = Integer.parseInt(args[i]);    // コマンドライン引数をint型に変換
+                price = Integer.parseInt(args[args.length -1]); 
             } catch (Exception e){
-
-                System.out.println("硬貨以外を入れないでください。自動販売機が壊れます。");
-                // 次のループに行く
-                continue;
+                System.out.println("自動販売機が壊れています、大変申し訳ございません。" 
+                                        + LINE_SEPARATOR + "自動販売機の管理者に問い合わせしてください。");
+                System.exit(0);
             }
-            // 確認する硬貨が投入可能な硬貨か確認
-            if (coinChk == 10 || coinChk == 50 || coinChk == 100 || coinChk == 500){
-                System.out.println(coinChk +"円");
-                coinSum += coinChk;
-            } else if(coinChk == 1 || coinChk == 5){
-                System.out.println(coinChk + "円は使えません。申し訳ございません。");
-            }else {
-                System.out.println("使用出来ない硬貨が投入されました。");
-            }    
+            // 投入金額を確認
+            if (coinNum > 1){
+                for (int i = 0; i < (coinNum -1); i++){
+                    // 使用可能な硬貨か確認する
+                    try {
+                        coinChk = Integer.parseInt(args[i]);
+                    } catch (Exception e){
+                        System.out.println("硬貨以外を入れないでください。自動販売機が壊れます。");
+                        // 次のループに行く
+                        continue;
+                    }
+                    // 確認する硬貨が投入可能な硬貨か確認
+                    if (coinChk == 10 || coinChk == 50 || coinChk == 100 || coinChk == 500){
+                        System.out.println(coinChk +"円玉が投入されました。");
+                        coinSum += coinChk;
+                    } else if(coinChk == 1 || coinChk == 5){
+                        System.out.println(coinChk + "円は使えません。申し訳ございません。");
+                    }else {
+                        System.out.println("使用出来ない硬貨が投入されました。");
+                    }    
+                }
+            } 
+            // 購入する商品の金額を表示
+            System.out.print("購入しようとしている商品価格は" + price + "円です。");
+            // 投入された硬貨の合計金額を表示
+            System.out.println("投入金額は" + coinSum + "円です。");
+            // おつりを計算
+            change = coinSum - price;
+            if (change > 0){
+                System.out.println("おつりは" + change + "円です。ありがとうございました。");
+            } else if (change == 0){
+                System.out.println("ちょうどお預かりします。ありがとうございました。");
+            } else {
+                System.out.println("あと" + -change + "円足りません。ご準備お願いいたします。");
+            }
+
+        } else {
+            System.out.println("お気に召す商品がなかったのですね。" 
+                                    + LINE_SEPARATOR + "次回までに準備しておきます。申し訳ございません。");
         }
-        // 投入された合計金額を表示
-        System.out.println("合計金額ば" + coinSum + "円です。");
     }
 }
