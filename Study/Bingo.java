@@ -1,4 +1,5 @@
-import java.util.Random;
+import java.util.ArrayList;
+import java.util.Collections;
 
 // ==========ビンゴゲーム==========
 // ビンゴゲームの流れは、以下の通り
@@ -14,8 +15,24 @@ public class Bingo {
     public static final String LINE_SEPARATOR = System.getProperty("line.separator");   // 改行コード
     public static void main(String[] args) {
         // カードの準備
-        // 乱数
-        Random rnd = new Random();
+        int[][] card = new int[5][5];
+        ArrayList<Integer> list = new ArrayList<Integer>();
+
+        for (int i = 1; i <99; i++){
+            list.add(i);
+        }
+
+        // リストをシャッフル
+        Collections.shuffle(list);
+        
+        int n = 0;
+        for (int j = 0; j < 5; j++){
+            for(int i = 0; i < 5; i++){
+                card[j][i] = list.get(n);
+                n++;
+            }
+        }
+
         // カードのタイトル
         System.out.println("   B |  I  |  N  |  G  |  O");
 
@@ -26,8 +43,7 @@ public class Bingo {
                 if (row == 2 && cell == 2){
                     System.out.print("  ☆  |");
                 }else{
-                    int val = (int)(rnd.nextDouble() * 100.0);
-                    System.out.printf("%3d", val);
+                    System.out.printf("%3d",card[cell][row]);
 
                     // 5列目の後ろは縦線つけない
                     if (cell != 4){
