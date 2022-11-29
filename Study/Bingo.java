@@ -17,7 +17,7 @@ public class Bingo {
         // 1. カードの準備
         int[][] card = new int[5][5];
         ArrayList<Integer> list = new ArrayList<>();
-        for (int i = 1; i <99; i++){
+        for (int i = 1; i <= 99; i++){
             list.add(i);
         }
         Collections.shuffle(list);
@@ -25,7 +25,12 @@ public class Bingo {
         int n = 0;
         for (int j = 0; j < 5; j++){
             for(int i = 0; i < 5; i++){
-                card[j][i] = list.get(n);
+                if (j == 2 && i == 2){
+                    // 最初から空いている真ん中
+                    card[j][i] = 0;
+                }else{
+                    card[j][i] = list.get(n);
+                }
                 n++;
             }
         }
@@ -51,7 +56,8 @@ public class Bingo {
             System.out.println(LINE_SEPARATOR);
         }
 
-        for (int bingoNum = 1; bingoNum <= 10; bingoNum++){
+        int  bingo = 1;
+        for (int bingoNum = 1; bingoNum < 99; bingoNum++){
             // 3. くじを引き、番号を表示
             Collections.shuffle(list);
             int number = list.get(bingoNum);
@@ -93,6 +99,30 @@ public class Bingo {
                 }
                 System.out.println(LINE_SEPARATOR);
             }
+
+            // 判定
+            // ビンゴ
+            // 縦
+            if (card[0][0] + card[1][0] + card[2][0] + card[3][0] + card[4][0] == 0) break;
+            if (card[0][1] + card[1][1] + card[2][1] + card[3][1] + card[4][1] == 0) break;
+            if (card[0][2] + card[1][2] + card[2][2] + card[3][2] + card[4][2] == 0) break;
+            if (card[0][3] + card[1][3] + card[2][3] + card[3][3] + card[4][3] == 0) break;
+            if (card[0][4] + card[1][4] + card[2][4] + card[3][4] + card[4][4] == 0) break;
+
+            // 横
+            if (card[0][0] + card[0][1] + card[0][2] + card[0][3] + card[0][4] == 0) break;
+            if (card[1][0] + card[1][1] + card[1][2] + card[1][3] + card[1][4] == 0) break;
+            if (card[2][0] + card[2][1] + card[2][2] + card[2][3] + card[2][4] == 0) break;
+            if (card[3][0] + card[3][1] + card[3][2] + card[3][3] + card[3][4] == 0) break;
+            if (card[4][0] + card[4][1] + card[4][2] + card[4][3] + card[4][4] == 0) break;
+            // 斜め
+            if (card[0][0] + card[1][1] + card[2][2] + card[3][3] + card[4][4] == 0) break;            
+            if (card[0][4] + card[1][3] + card[2][2] + card[3][1] + card[4][0] == 0) break;
+            
+            bingo++;
+        }
+        if (bingo < 99){
+            System.out.println("ビンゴ！！！");
         }
     }
 }
