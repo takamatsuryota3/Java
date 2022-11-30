@@ -9,11 +9,23 @@ import java.util.Collections;
 // 4. 表示された番号が、カードの中にあれば、番号部分を穴あけ
 // 5. カードを表示
 // 6. ビンゴか判定（ビンゴなら終了、ビンゴじゃなければ、3に戻り繰り返す）
+// ビンゴ出来る回数は最大99回とする
 // ==============================
 
 public class Bingo {
     public static final String LINE_SEPARATOR = System.getProperty("line.separator");   // 改行コード
     public static void main(String[] args) {
+        // コマンドライン引数から、ビンゴの抽選回数を指定
+        int bingoCount = 0;
+        if (args.length == 1){
+            bingoCount = Integer.parseInt(args[0]);
+            if (bingoCount > 99){
+                bingoCount = 99;
+            }
+        } else {
+            // 指定なし、もしくは、２つ以上の引数を指定された場合は、デフォルト回数にする
+            bingoCount = 99;
+        }
         // 1. カードの準備
         int[][] card = new int[5][5];
         ArrayList<Integer> list = new ArrayList<>();
@@ -57,10 +69,10 @@ public class Bingo {
         }
 
         int  bingo = 1;
-        for (int bingoNum = 1; bingoNum < 99; bingoNum++){
+        for (int bingoNum = 1; bingoNum <= bingoCount; bingoNum++){
             // 3. くじを引き、番号を表示
             Collections.shuffle(list);
-            int number = list.get(bingoNum);
+            int number = list.get(bingoNum - 1);
             System.out.println(bingoNum + "回目：" + number);
 
             // 4. 表示された番号が、カードの中にあれば、番号部分を穴あけ
@@ -115,14 +127,22 @@ public class Bingo {
             if (card[2][0] + card[2][1] + card[2][2] + card[2][3] + card[2][4] == 0) break;
             if (card[3][0] + card[3][1] + card[3][2] + card[3][3] + card[3][4] == 0) break;
             if (card[4][0] + card[4][1] + card[4][2] + card[4][3] + card[4][4] == 0) break;
+            
             // 斜め
             if (card[0][0] + card[1][1] + card[2][2] + card[3][3] + card[4][4] == 0) break;            
             if (card[0][4] + card[1][3] + card[2][2] + card[3][1] + card[4][0] == 0) break;
             
+            // ビンゴに該当しなかったら、カウントアップ
             bingo++;
         }
-        if (bingo < 99){
-            System.out.println("ビンゴ！！！");
+
+        if (bingo < bingoCount){
+            // 指定回数までに、ビンゴになった場合
+            System.out.println("B I N G O ! ! !");
+        } else {
+            // 指定価数までに、ビンゴにならなかった場合
+            System.out.println("No BINGO. GAMEOVER.");
+            
         }
     }
 }
